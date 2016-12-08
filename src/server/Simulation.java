@@ -1,10 +1,12 @@
 package server;
 
+import shared.ClientResponse;
 import shared.CommunicationObj;
+import shared.MyPair;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,9 +19,14 @@ public class Simulation extends Thread{
     //I use a hashMap for this.
     private ConcurrentHashMap<ClientThread, Agent> agentsMap;
 
+    Vector<MyPair<ClientThread, ClientResponse>> inputData = new Vector<>();
+
+    public Vector<MyPair<ClientThread, ClientResponse>> getInputData()
+    {
+        return inputData;
+    }
 
     //add a response queue from all the clients
-
     public Simulation() {
         agentsMap = new ConcurrentHashMap<>();
     }
@@ -46,15 +53,24 @@ public class Simulation extends Thread{
         }
     }
 
-
     private void update() throws Exception
     {
+        //TODO should not use sleep
         Thread.sleep(1000);
+
+        ui.ServerUI.clearScreen();
+        //send getAction command to all the clients.
         Iterator it = agentsMap.entrySet().iterator();
         while (it.hasNext())
         {
             Map.Entry pair = (Map.Entry) it.next();
             ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",123));
+            ui.ServerUI.drawCircle(((Agent)pair.getValue()).xPos,((Agent)pair.getValue()).yPos);
+            ((Agent)pair.getValue()).xPos = ((Agent)pair.getValue()).xPos + 5;
         }
+
+
+        //check the queue
+        //do simulation or something?
     }
 }

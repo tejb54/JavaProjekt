@@ -17,6 +17,6 @@ public class MainServer {
         mainSimulation.start();
 
         //start the ui on it's own thread
-        //ui.ServerUI.startUI(new String[]{"empty"});
+        ui.ServerUI.startUI(new String[]{"empty"});
     }
 }

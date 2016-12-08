@@ -8,7 +8,6 @@ import java.net.Socket;
  */
 public class NetworkManager extends Thread{
     private int port;
-    private shared.NetworkParser parser;
 
     public NetworkManager(int port) {
         this.port = port;
@@ -29,8 +28,6 @@ public class NetworkManager extends Thread{
 
                 //hand the connection over to it's own thread.
                 ClientThread ct = new ClientThread(newSocket);
-
-                //create a new agent object to simulate.
             }
         }
         catch (Exception ex)

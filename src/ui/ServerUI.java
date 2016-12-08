@@ -3,6 +3,9 @@ package ui;/**
  */
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
@@ -19,17 +22,30 @@ public class ServerUI extends Application {
         launch(args);
     }
 
+    private static Group root;
+
+    public static void clearScreen()
+    {
+        Platform.runLater(()->{
+            root.getChildren().clear();
+        });
+
+    }
+
+    public static void drawCircle(double x, double y)
+    {
+        Platform.runLater(()->{
+            Circle circle = new Circle(x,y,5, Color.RED);
+            root.getChildren().add(circle);
+        });
+
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Server simulation");
+        root = new Group();
 
-        Circle circle = new Circle();
-        circle.setCenterX(100.0f);
-        circle.setCenterY(100.0f);
-        circle.setRadius(50.0f);
-
-        StackPane root = new StackPane();
-        root.getChildren().add(circle);
         primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
     }

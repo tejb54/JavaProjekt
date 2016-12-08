@@ -1,5 +1,7 @@
 package server;
 
+import shared.ClientResponse;
+import shared.MyPair;
 import sun.applet.Main;
 
 import java.io.IOException;
@@ -35,16 +37,14 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
 
-
         parser.registerCallback("Connecting",(String header,Object payload)->{
             System.out.println(header);
             //Client sends the connection event
-            MainServer.mainSimulation.addAgent(this,new Agent());
-
+            MainServer.mainSimulation.addAgent(this,new Agent(50,50,0));
         });
 
         parser.registerCallback("basic",(String header,Object payload)->{
-            System.out.println(header);
+            MainServer.mainSimulation.getInputData().add(new MyPair<>(this,new ClientResponse((int)payload,(int)payload)));
         });
 
         try {

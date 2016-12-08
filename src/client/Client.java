@@ -29,7 +29,8 @@ public class Client {
             clientParser.sendData(new CommunicationObj("basic",123));
         });
 
-        out.writeObject(new shared.CommunicationObj("Connecting",123));
+
+        out.writeObject(new CommunicationObj("Connecting",123));
         while (true)
         {
             clientParser.parse();
