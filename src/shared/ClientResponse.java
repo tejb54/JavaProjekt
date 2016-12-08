@@ -1,9 +1,11 @@
 package shared;
 
+import java.io.Serializable;
+
 /**
  * Created by Tobias on 2016-12-08.
  */
-public class ClientResponse
+public class ClientResponse implements Serializable
 {
     public ClientResponse(float xMove, float yMove)
     {
@@ -11,6 +13,6 @@ public class ClientResponse
         this.yMove = yMove;
     }
 
-    float xMove;
-    float yMove;
+    public float xMove;
+    public float yMove;
 }

@@ -44,7 +44,8 @@ public class ClientThread extends Thread {
         });
 
         parser.registerCallback("basic",(String header,Object payload)->{
-            MainServer.mainSimulation.getInputData().add(new MyPair<>(this,new ClientResponse((int)payload,(int)payload)));
+            System.out.println(header);
+            MainServer.mainSimulation.getInputData().add(new MyPair<>(this, (ClientResponse)payload));
         });
 
         try {

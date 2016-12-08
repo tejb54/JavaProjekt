@@ -27,7 +27,10 @@ public class ServerUI extends Application {
     public static void clearScreen()
     {
         Platform.runLater(()->{
-            root.getChildren().clear();
+            if(root != null)
+            {
+                root.getChildren().clear();
+            }
         });
 
     }
@@ -35,8 +38,12 @@ public class ServerUI extends Application {
     public static void drawCircle(double x, double y)
     {
         Platform.runLater(()->{
-            Circle circle = new Circle(x,y,5, Color.RED);
-            root.getChildren().add(circle);
+            if(root != null)
+            {
+                Circle circle = new Circle(x,y,5, Color.RED);
+                root.getChildren().add(circle);
+            }
+
         });
 
     }

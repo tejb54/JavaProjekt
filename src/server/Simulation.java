@@ -56,7 +56,7 @@ public class Simulation extends Thread{
     private void update() throws Exception
     {
         //TODO should not use sleep
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         ui.ServerUI.clearScreen();
         //send getAction command to all the clients.
@@ -66,11 +66,19 @@ public class Simulation extends Thread{
             Map.Entry pair = (Map.Entry) it.next();
             ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",123));
             ui.ServerUI.drawCircle(((Agent)pair.getValue()).xPos,((Agent)pair.getValue()).yPos);
-            ((Agent)pair.getValue()).xPos = ((Agent)pair.getValue()).xPos + 5;
         }
 
 
         //check the queue
+        while (inputData.size() != agentsMap.size()){}
+
+        for (MyPair<ClientThread,ClientResponse> p: inputData)
+        {
+            agentsMap.get(p.getL()).xPos += p.getR().xMove;
+            agentsMap.get(p.getL()).yPos += p.getR().yMove;
+        }
+
+        inputData.clear();
         //do simulation or something?
     }
 }

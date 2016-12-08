@@ -1,5 +1,6 @@
 package client;
 
+import shared.ClientResponse;
 import shared.CommunicationObj;
 
 import java.io.*;
@@ -26,7 +27,7 @@ public class Client {
 
         clientParser.registerCallback("getAction",(String header, Object payload)->{
             System.out.println(header);
-            clientParser.sendData(new CommunicationObj("basic",123));
+            clientParser.sendData(new CommunicationObj("basic",new ClientResponse(3,3)));
         });
 
 
