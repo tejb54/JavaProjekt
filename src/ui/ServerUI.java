@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,24 +27,38 @@ public class ServerUI extends Application {
 
     public static void clearScreen()
     {
-        Platform.runLater(()->{
-            if(root != null)
-            {
-                root.getChildren().clear();
-            }
-        });
+        try
+        {
+            Platform.runLater(()->{
+                if(root != null)
+                {
+                    root.getChildren().clear();
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Platform not ready");
+        }
+
 
     }
 
-    public static void drawCircle(double x, double y)
+    public static void drawTriangle(double x, double y,double angle)
     {
         Platform.runLater(()->{
             if(root != null)
             {
-                Circle circle = new Circle(x,y,5, Color.RED);
-                root.getChildren().add(circle);
-            }
+                Polygon polygon = new Polygon();
+                polygon.getPoints().addAll(
+                        x, y-10,
+                        x-5, y+5,
+                        x+5, y+5);
+                polygon.setRotate(angle);
+                polygon.setFill(Color.RED);
 
+                root.getChildren().add(polygon);
+            }
         });
 
     }
@@ -53,7 +68,7 @@ public class ServerUI extends Application {
         primaryStage.setTitle("Server simulation");
         root = new Group();
 
-        primaryStage.setScene(new Scene(root, 300, 250));
+        primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();
     }
 }

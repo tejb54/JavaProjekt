@@ -6,6 +6,7 @@ import shared.CommunicationObj;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Random;
 
 /**
  * Created by Tobias on 2016-12-06.
@@ -27,7 +28,9 @@ public class Client {
 
         clientParser.registerCallback("getAction",(String header, Object payload)->{
             System.out.println(header);
-            clientParser.sendData(new CommunicationObj("basic",new ClientResponse(3,3)));
+            Random r = new Random();
+            double randomValue = -3 + (3 - (-3)) * r.nextDouble();
+            clientParser.sendData(new CommunicationObj("basic",new ClientResponse(1,1,4)));
         });
 
 

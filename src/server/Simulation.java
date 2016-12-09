@@ -55,8 +55,10 @@ public class Simulation extends Thread{
 
     private void update() throws Exception
     {
+        //TODO check that the iterators are thread safe.
+
         //TODO should not use sleep
-        Thread.sleep(500);
+        Thread.sleep(100);
 
         ui.ServerUI.clearScreen();
         //send getAction command to all the clients.
@@ -65,10 +67,10 @@ public class Simulation extends Thread{
         {
             Map.Entry pair = (Map.Entry) it.next();
             ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",123));
-            ui.ServerUI.drawCircle(((Agent)pair.getValue()).xPos,((Agent)pair.getValue()).yPos);
+            ui.ServerUI.drawTriangle(((Agent)pair.getValue()).xPos,((Agent)pair.getValue()).yPos,((Agent)pair.getValue()).angle);
         }
 
-
+        //TODO this is more off a hack.
         //check the queue
         while (inputData.size() != agentsMap.size()){}
 
@@ -76,9 +78,12 @@ public class Simulation extends Thread{
         {
             agentsMap.get(p.getL()).xPos += p.getR().xMove;
             agentsMap.get(p.getL()).yPos += p.getR().yMove;
+            agentsMap.get(p.getL()).angle += p.getR().angleMove;
         }
 
         inputData.clear();
+
+
         //do simulation or something?
     }
 }
