@@ -15,6 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 
+import java.awt.event.MouseEvent;
+
 public class ServerUI extends Application {
 
 
@@ -24,6 +26,8 @@ public class ServerUI extends Application {
     }
 
     private static Group root;
+    public static int mouseX = 0;
+    public static int mouseY = 0;
 
     public static void clearScreen()
     {
@@ -51,9 +55,10 @@ public class ServerUI extends Application {
             {
                 Polygon polygon = new Polygon();
                 polygon.getPoints().addAll(
-                        x, y-10,
-                        x-5, y+5,
-                        x+5, y+5);
+                        x+12, y,
+                        x-7, y+7,
+                        x-3, y,
+                        x-7, y-7);
                 polygon.setRotate(angle);
                 polygon.setFill(Color.RED);
 
@@ -67,6 +72,12 @@ public class ServerUI extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Server simulation");
         root = new Group();
+
+        root.setOnMouseMoved(event -> {
+            System.out.println("Mouse moved");
+            mouseX = (int) event.getX();
+            mouseY = (int) event.getY();
+        });
 
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();

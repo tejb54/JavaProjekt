@@ -10,7 +10,7 @@ public class Agent {
     double xPos; //this is used by the GUI.
     double yPos; //this is used by the GUI.
 
-    double angle; //angle for the agent.
+    double angle; //angle of the agent.
 
     List<Agent> neighbors; //list off all the neighbors
 

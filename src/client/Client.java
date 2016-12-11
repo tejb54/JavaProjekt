@@ -29,8 +29,7 @@ public class Client {
         clientParser.registerCallback("getAction",(String header, Object payload)->{
             System.out.println(header);
             Random r = new Random();
-            double randomValue = -3 + (3 - (-3)) * r.nextDouble();
-            clientParser.sendData(new CommunicationObj("basic",new ClientResponse(1,1,4)));
+            clientParser.sendData(new CommunicationObj("basic",new ClientResponse(3f,3f)));
         });
 
 

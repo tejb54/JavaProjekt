@@ -55,12 +55,14 @@ public class Simulation extends Thread{
 
     private void update() throws Exception
     {
-        //TODO check that the iterators are thread safe.
+
 
         //TODO should not use sleep
         Thread.sleep(100);
 
         ui.ServerUI.clearScreen();
+
+        //TODO check that the iterators are thread safe.
         //send getAction command to all the clients.
         Iterator it = agentsMap.entrySet().iterator();
         while (it.hasNext())
@@ -70,20 +72,32 @@ public class Simulation extends Thread{
             ui.ServerUI.drawTriangle(((Agent)pair.getValue()).xPos,((Agent)pair.getValue()).yPos,((Agent)pair.getValue()).angle);
         }
 
-        //TODO this is more off a hack.
-        //check the queue
+        //TODO this is more of a hack.
+        //wait for the queue/vector to get all the commands/responses from clients.
         while (inputData.size() != agentsMap.size()){}
 
         for (MyPair<ClientThread,ClientResponse> p: inputData)
         {
-            agentsMap.get(p.getL()).xPos += p.getR().xMove;
-            agentsMap.get(p.getL()).yPos += p.getR().yMove;
-            agentsMap.get(p.getL()).angle += p.getR().angleMove;
+            Agent currentAgent = agentsMap.get(p.getL());
+            currentAgent.angle += p.getR().angleMove;
+            currentAgent.xPos += Math.cos(currentAgent.angle *(Math.PI/180f)) * p.getR().speed;
+            currentAgent.yPos += Math.sin(currentAgent.angle *(Math.PI/180f)) * p.getR().speed;
+
+            if(currentAgent.xPos > 500)
+            {
+                currentAgent.xPos = 0;
+            }
+
+            if(currentAgent.xPos < 0)
+            {
+                currentAgent.xPos = 500;
+            }
         }
 
         inputData.clear();
 
 
         //do simulation or something?
+        //calculate the neighbors for each client.
     }
 }
