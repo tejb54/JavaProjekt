@@ -1,5 +1,7 @@
 package shared;
 
+import server.SimpleAgent;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,10 @@ import java.io.Serializable;
 public class ServerResponse implements Serializable {
     //TODO this class should contain data about an agents neighbors.
 
-
+    public SimpleAgent[] neighbors;
+    public float xPos;
+    public float yPos;
+    public float yVelocity;
+    public float xVelocity;
 
 }

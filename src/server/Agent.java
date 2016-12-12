@@ -1,23 +1,32 @@
 package server;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Tobias on 2016-12-07.
  */
-public class Agent {
+public class Agent implements Serializable {
 
-    double xPos; //this is used by the GUI.
-    double yPos; //this is used by the GUI.
+    public double xPos; //this is used by the GUI.
+    public double yPos; //this is used by the GUI.
+    public double xVelocity;
+    public double yVelocity;
 
-    double angle; //angle of the agent.
+    double angle; //this is used by the GUI.
 
-    List<Agent> neighbors; //list off all the neighbors
+    public List<SimpleAgent> neighbors; //list off all the neighbors
 
-    public Agent(double xPos, double yPos, double angle)
+    public Agent(double xPos, double yPos)
     {
+        neighbors = new ArrayList<>();
         this.xPos = xPos;
         this.yPos = yPos;
-        this.angle = angle;
+    }
+
+    SimpleAgent getSimplification()
+    {
+        return new SimpleAgent(xPos,yPos,xVelocity,yVelocity);
     }
 }

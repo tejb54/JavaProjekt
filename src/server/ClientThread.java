@@ -40,11 +40,10 @@ public class ClientThread extends Thread {
         parser.registerCallback("Connecting",(String header,Object payload)->{
             System.out.println(header);
             //Client sends the connection event
-            MainServer.mainSimulation.addAgent(this,new Agent(50,50,0));
+            MainServer.mainSimulation.addAgent(this,new Agent(50,50));
         });
 
         parser.registerCallback("basic",(String header,Object payload)->{
-            System.out.println(header);
             MainServer.mainSimulation.getInputData().add(new MyPair<>(this, (ClientResponse)payload));
         });
 

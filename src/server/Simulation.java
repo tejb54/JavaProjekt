@@ -3,6 +3,7 @@ package server;
 import shared.ClientResponse;
 import shared.CommunicationObj;
 import shared.MyPair;
+import shared.ServerResponse;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -31,12 +32,16 @@ public class Simulation extends Thread{
         agentsMap = new ConcurrentHashMap<>();
     }
 
+    private float neighborRadius = 60f;
 
     //TODO this needs to be synced.
     //check if it's working with the ConcurrentHashMap.
     public void addAgent(ClientThread ct, Agent a)
     {
-        agentsMap.put(ct,a);
+        synchronized (agentsMap){
+            agentsMap.put(ct,a);
+        }
+
     }
 
     @Override
@@ -58,19 +63,54 @@ public class Simulation extends Thread{
 
 
         //TODO should not use sleep
-        Thread.sleep(100);
+        Thread.sleep(50);
 
         ui.ServerUI.clearScreen();
 
         //TODO check that the iterators are thread safe.
-        //send getAction command to all the clients.
-        Iterator it = agentsMap.entrySet().iterator();
-        while (it.hasNext())
+
+
+        synchronized (agentsMap)
         {
-            Map.Entry pair = (Map.Entry) it.next();
-            ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",123));
-            ui.ServerUI.drawTriangle(((Agent)pair.getValue()).xPos,((Agent)pair.getValue()).yPos,((Agent)pair.getValue()).angle);
+            //send getAction command to all the clients.
+            Iterator it = agentsMap.entrySet().iterator();
+            while (it.hasNext())
+            {
+                Map.Entry pair = (Map.Entry) it.next();
+
+                Agent currentAgent = (Agent)pair.getValue();
+                currentAgent.neighbors.clear();
+
+                Iterator it2 = agentsMap.entrySet().iterator();
+                ServerResponse serverResponse = new ServerResponse();
+                //check for neighbors
+                while (it2.hasNext())
+                {
+                    Map.Entry pair2 = (Map.Entry) it2.next();
+                    Agent agentToCheck = (Agent) pair2.getValue();
+                    if(agentToCheck != currentAgent)
+                    {
+                        if(Math.abs(agentToCheck.xPos - currentAgent.xPos) < neighborRadius && Math.abs(agentToCheck.yPos - currentAgent.yPos) < neighborRadius)
+                        {
+                            System.out.println("neighbor added");
+                            currentAgent.neighbors.add(agentToCheck.getSimplification());
+                        }
+                    }
+                }
+
+                serverResponse.neighbors = currentAgent.neighbors.toArray(new SimpleAgent[currentAgent.neighbors.size()]);
+                serverResponse.xPos = (float) currentAgent.xPos;
+                serverResponse.yPos = (float) currentAgent.yPos;
+                serverResponse.xVelocity = (float) currentAgent.xVelocity;
+                serverResponse.yVelocity = (float) currentAgent.yVelocity;
+
+
+                ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",serverResponse));
+                ui.ServerUI.drawTriangle(currentAgent.xPos,currentAgent.yPos,currentAgent.angle);
+                ui.ServerUI.drawCircle(currentAgent.xPos,currentAgent.yPos,neighborRadius);
+            }
         }
+
 
         //TODO this is more of a hack.
         //wait for the queue/vector to get all the commands/responses from clients.
@@ -79,9 +119,12 @@ public class Simulation extends Thread{
         for (MyPair<ClientThread,ClientResponse> p: inputData)
         {
             Agent currentAgent = agentsMap.get(p.getL());
-            currentAgent.angle += p.getR().angleMove;
-            currentAgent.xPos += Math.cos(currentAgent.angle *(Math.PI/180f)) * p.getR().speed;
-            currentAgent.yPos += Math.sin(currentAgent.angle *(Math.PI/180f)) * p.getR().speed;
+            currentAgent.xPos += p.getR().xVelocity;
+            currentAgent.yPos += p.getR().yVelocity;
+            currentAgent.xVelocity = p.getR().xVelocity;
+            currentAgent.yVelocity = p.getR().yVelocity;
+
+            currentAgent.angle = Math.toDegrees(Math.atan2(p.getR().yVelocity,p.getR().xVelocity));
 
             if(currentAgent.xPos > 500)
             {

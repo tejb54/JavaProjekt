@@ -7,13 +7,11 @@ import java.io.Serializable;
  */
 public class ClientResponse implements Serializable
 {
-    public ClientResponse(float speed,float angleMove)
-    {
-        this.speed = speed;
-        this.angleMove = angleMove;
+    public ClientResponse(float xVelocity, float yVelocity) {
+        this.xVelocity = xVelocity;
+        this.yVelocity = yVelocity;
     }
 
-
-    public float angleMove;
-    public float speed;
+    public float xVelocity;
+    public float yVelocity;
 }

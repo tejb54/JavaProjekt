@@ -68,6 +68,19 @@ public class ServerUI extends Application {
 
     }
 
+    public static void drawCircle(double x, double y,double radius)
+    {
+        Platform.runLater(()->{
+            if(root != null)
+            {
+                Circle c = new Circle(x,y,radius,new Color(0,0,1,0.1));
+
+                root.getChildren().add(c);
+            }
+        });
+
+    }
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Server simulation");

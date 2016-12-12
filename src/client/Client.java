@@ -1,11 +1,15 @@
 package client;
 
+import server.Agent;
+import server.SimpleAgent;
 import shared.ClientResponse;
 import shared.CommunicationObj;
+import shared.ServerResponse;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -18,6 +22,8 @@ public class Client {
         runClient();
     }
 
+    static float angle = 0;
+
     private static void runClient() throws Exception
     {
         Socket clientSocket = new Socket(InetAddress.getByName("localhost"),1234);
@@ -26,10 +32,13 @@ public class Client {
 
         shared.NetworkParser clientParser = new shared.NetworkParser(in,out);
 
+
+
         clientParser.registerCallback("getAction",(String header, Object payload)->{
+            ServerResponse response = (ServerResponse)payload;
             System.out.println(header);
-            Random r = new Random();
-            clientParser.sendData(new CommunicationObj("basic",new ClientResponse(3f,3f)));
+            System.out.println(response.neighbors.length);
+            clientParser.sendData(new CommunicationObj("basic",new ClientResponse( (float)Math.cos(angle),(float)Math.sin(angle))));
         });
 
 
