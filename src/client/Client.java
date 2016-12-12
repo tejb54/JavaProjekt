@@ -17,9 +17,15 @@ import java.util.Random;
  */
 public class Client {
 
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args)
     {
-        runClient();
+        try {
+            runClient();
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
     }
 
     static float angle = 0;
@@ -32,11 +38,11 @@ public class Client {
 
         shared.NetworkParser clientParser = new shared.NetworkParser(in,out);
 
-
+        Random r = new Random();
+        angle = r.nextInt(360);
 
         clientParser.registerCallback("getAction",(String header, Object payload)->{
             ServerResponse response = (ServerResponse)payload;
-            System.out.println(header);
             System.out.println(response.neighbors.length);
             clientParser.sendData(new CommunicationObj("basic",new ClientResponse( (float)Math.cos(angle),(float)Math.sin(angle))));
         });

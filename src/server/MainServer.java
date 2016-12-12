@@ -5,6 +5,7 @@ package server;
  */
 public class MainServer {
     static Simulation mainSimulation;
+    public static boolean runnigSimulation = true;
 
     public static void main(String[] args)
     {

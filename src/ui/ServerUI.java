@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+import server.MainServer;
 
 import java.awt.event.MouseEvent;
 
@@ -86,11 +87,17 @@ public class ServerUI extends Application {
         primaryStage.setTitle("Server simulation");
         root = new Group();
 
-        root.setOnMouseMoved(event -> {
-            System.out.println("Mouse moved");
-            mouseX = (int) event.getX();
-            mouseY = (int) event.getY();
+        primaryStage.setOnCloseRequest(event -> {
+            MainServer.runnigSimulation = false;
         });
+
+//        root.setOnMouseMoved(event -> {
+//            System.out.println("Mouse moved");
+//            mouseX = (int) event.getX();
+//            mouseY = (int) event.getY();
+//        });
+
+
 
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();

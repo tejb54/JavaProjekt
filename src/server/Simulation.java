@@ -47,7 +47,7 @@ public class Simulation extends Thread{
     @Override
     public void run() {
         try {
-            while (true)
+            while (MainServer.runnigSimulation)
             {
                 update();
             }
@@ -82,7 +82,9 @@ public class Simulation extends Thread{
                 currentAgent.neighbors.clear();
 
                 Iterator it2 = agentsMap.entrySet().iterator();
-                ServerResponse serverResponse = new ServerResponse();
+
+
+
                 //check for neighbors
                 while (it2.hasNext())
                 {
@@ -98,6 +100,7 @@ public class Simulation extends Thread{
                     }
                 }
 
+                ServerResponse serverResponse = new ServerResponse();
                 serverResponse.neighbors = currentAgent.neighbors.toArray(new SimpleAgent[currentAgent.neighbors.size()]);
                 serverResponse.xPos = (float) currentAgent.xPos;
                 serverResponse.yPos = (float) currentAgent.yPos;
@@ -106,15 +109,15 @@ public class Simulation extends Thread{
 
 
                 ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",serverResponse));
-                ui.ServerUI.drawTriangle(currentAgent.xPos,currentAgent.yPos,currentAgent.angle);
-                ui.ServerUI.drawCircle(currentAgent.xPos,currentAgent.yPos,neighborRadius);
             }
         }
 
 
         //TODO this is more of a hack.
         //wait for the queue/vector to get all the commands/responses from clients.
-        while (inputData.size() != agentsMap.size()){}
+        while (inputData.size() != agentsMap.size()){
+            System.out.println("waiting for all the commands");
+        }
 
         for (MyPair<ClientThread,ClientResponse> p: inputData)
         {
@@ -126,6 +129,7 @@ public class Simulation extends Thread{
 
             currentAgent.angle = Math.toDegrees(Math.atan2(p.getR().yVelocity,p.getR().xVelocity));
 
+
             if(currentAgent.xPos > 500)
             {
                 currentAgent.xPos = 0;
@@ -135,6 +139,18 @@ public class Simulation extends Thread{
             {
                 currentAgent.xPos = 500;
             }
+
+            if(currentAgent.yPos > 500)
+            {
+                currentAgent.yPos = 0;
+            }
+
+            if(currentAgent.yPos < 0)
+            {
+                currentAgent.yPos = 500;
+            }
+            ui.ServerUI.drawTriangle(currentAgent.xPos,currentAgent.yPos,currentAgent.angle);
+            ui.ServerUI.drawCircle(currentAgent.xPos,currentAgent.yPos,neighborRadius);
         }
 
         inputData.clear();
