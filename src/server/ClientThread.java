@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Random;
 
 /**
  * Created by Tobias on 2016-12-06.
@@ -40,7 +41,9 @@ public class ClientThread extends Thread {
         parser.registerCallback("Connecting",(String header,Object payload)->{
             System.out.println(header);
             //Client sends the connection event
-            MainServer.mainSimulation.addAgent(this,new Agent(50,50));
+            Random r = new Random();
+            float angle = r.nextInt(360);
+            MainServer.mainSimulation.addAgent(this,new Agent(50,50, Math.cos(angle), Math.sin(angle)));
         });
 
         parser.registerCallback("basic",(String header,Object payload)->{

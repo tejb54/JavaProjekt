@@ -27,8 +27,8 @@ public class ServerUI extends Application {
     }
 
     private static Group root;
-    public static int mouseX = 0;
-    public static int mouseY = 0;
+    public static int width = 1000;
+    public static int height = 1000;
 
     public static void clearScreen()
     {
@@ -99,7 +99,7 @@ public class ServerUI extends Application {
 
 
 
-        primaryStage.setScene(new Scene(root, 500, 500));
+        primaryStage.setScene(new Scene(root, width, height));
         primaryStage.show();
     }
 }

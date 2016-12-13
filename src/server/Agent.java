@@ -18,11 +18,12 @@ public class Agent implements Serializable {
 
     public List<SimpleAgent> neighbors; //list off all the neighbors
 
-    public Agent(double xPos, double yPos)
-    {
+    public Agent(double xPos, double yPos, double xVelocity, double yVelocity) {
         neighbors = new ArrayList<>();
         this.xPos = xPos;
         this.yPos = yPos;
+        this.xVelocity = xVelocity;
+        this.yVelocity = yVelocity;
     }
 
     SimpleAgent getSimplification()

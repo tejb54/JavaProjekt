@@ -4,6 +4,7 @@ import shared.ClientResponse;
 import shared.CommunicationObj;
 import shared.MyPair;
 import shared.ServerResponse;
+import ui.ServerUI;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class Simulation extends Thread{
         agentsMap = new ConcurrentHashMap<>();
     }
 
-    private float neighborRadius = 60f;
+    private float neighborRadius = 100f;
 
     //TODO this needs to be synced.
     //check if it's working with the ConcurrentHashMap.
@@ -65,7 +66,7 @@ public class Simulation extends Thread{
         //TODO should not use sleep
         Thread.sleep(50);
 
-        ui.ServerUI.clearScreen();
+
 
         //TODO check that the iterators are thread safe.
 
@@ -107,56 +108,54 @@ public class Simulation extends Thread{
                 serverResponse.xVelocity = (float) currentAgent.xVelocity;
                 serverResponse.yVelocity = (float) currentAgent.yVelocity;
 
-
                 ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",serverResponse));
             }
+
+
+
+            //TODO this is more of a hack.
+            //wait for the queue/vector to get all the commands/responses from clients.
+            while (inputData.size() != agentsMap.size()){
+                //System.out.println("waiting for all the commands");
+            }
+
+            ui.ServerUI.clearScreen();
+
+            for (MyPair<ClientThread,ClientResponse> p: inputData)
+            {
+                Agent currentAgent = agentsMap.get(p.getL());
+                currentAgent.xPos += p.getR().xVelocity;
+                currentAgent.yPos += p.getR().yVelocity;
+                currentAgent.xVelocity = p.getR().xVelocity;
+                currentAgent.yVelocity = p.getR().yVelocity;
+
+                currentAgent.angle = Math.toDegrees(Math.atan2(p.getR().yVelocity,p.getR().xVelocity));
+
+
+                if(currentAgent.xPos > ServerUI.width)
+                {
+                    currentAgent.xPos = 0;
+                }
+
+                if(currentAgent.xPos < 0)
+                {
+                    currentAgent.xPos = ServerUI.width;
+                }
+
+                if(currentAgent.yPos > ServerUI.height)
+                {
+                    currentAgent.yPos = 0;
+                }
+
+                if(currentAgent.yPos < 0)
+                {
+                    currentAgent.yPos = ServerUI.height;
+                }
+                ui.ServerUI.drawTriangle(currentAgent.xPos,currentAgent.yPos,currentAgent.angle);
+                //ui.ServerUI.drawCircle(currentAgent.xPos,currentAgent.yPos,neighborRadius);
+            }
+
+            inputData.clear();
         }
-
-
-        //TODO this is more of a hack.
-        //wait for the queue/vector to get all the commands/responses from clients.
-        while (inputData.size() != agentsMap.size()){
-            System.out.println("waiting for all the commands");
-        }
-
-        for (MyPair<ClientThread,ClientResponse> p: inputData)
-        {
-            Agent currentAgent = agentsMap.get(p.getL());
-            currentAgent.xPos += p.getR().xVelocity;
-            currentAgent.yPos += p.getR().yVelocity;
-            currentAgent.xVelocity = p.getR().xVelocity;
-            currentAgent.yVelocity = p.getR().yVelocity;
-
-            currentAgent.angle = Math.toDegrees(Math.atan2(p.getR().yVelocity,p.getR().xVelocity));
-
-
-            if(currentAgent.xPos > 500)
-            {
-                currentAgent.xPos = 0;
-            }
-
-            if(currentAgent.xPos < 0)
-            {
-                currentAgent.xPos = 500;
-            }
-
-            if(currentAgent.yPos > 500)
-            {
-                currentAgent.yPos = 0;
-            }
-
-            if(currentAgent.yPos < 0)
-            {
-                currentAgent.yPos = 500;
-            }
-            ui.ServerUI.drawTriangle(currentAgent.xPos,currentAgent.yPos,currentAgent.angle);
-            ui.ServerUI.drawCircle(currentAgent.xPos,currentAgent.yPos,neighborRadius);
-        }
-
-        inputData.clear();
-
-
-        //do simulation or something?
-        //calculate the neighbors for each client.
     }
 }
