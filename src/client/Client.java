@@ -94,6 +94,24 @@ public class Client extends Thread{
         return v.normalize();
     }
 
+    public Vector2D calcObstacle(ServerResponse response)
+    {
+        Vector2D v = new Vector2D(0,0);
+
+        if(response.obstacle == null)
+        {
+            return v;
+        }
+
+        v.dX = response.obstacle.xPos - response.xPos;
+        v.dY = response.obstacle.yPos - response.yPos;
+
+        v.dX *= -1;
+        v.dY *= -1;
+
+        return v.normalize();
+    }
+
     public void run()
     {
         try {
@@ -105,8 +123,9 @@ public class Client extends Thread{
 
             float speed = 7f;
             float separationWeight = 1.0f;
-            float alignmentWeight = 1.5f;
+            float alignmentWeight = 1.0f;
             float cohesionWeight = 1.0f;
+            float obstacleWeight = 2.0f;
 
 
             Random r = new Random();
@@ -121,28 +140,43 @@ public class Client extends Thread{
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
+                    //System.out.println("UI is not ready");
+                    //ex.printStackTrace();
                 }
 
 
+                if(response.obstacle !=  null)
+                {
+                    System.out.println("Obstacle");
+                }
 
                 Vector2D vA = calcAlignment(response);
                 Vector2D vC = calcCohesion(response);
                 Vector2D vS = calcSeparation(response);
+                Vector2D vO = calcObstacle(response);
 
                 vA = vA.scale(alignmentWeight);
                 vC = vC.scale(cohesionWeight);
                 vS = vS.scale(separationWeight);
+                vO = vO.scale(obstacleWeight);
 
 
                 Vector2D vR = new Vector2D(response.xVelocity,response.yVelocity);
 
-                vR = vR.add(vA).add(vC).add(vS);
-                vR.dX += (1 - r.nextFloat()*2)/2;
-                vR.dY += (1 - r.nextFloat()*2)/2;
-                vR = vR.normalize();
+                System.out.println(vO.dX + " - " + vO.dY);
 
-                clientParser.sendData(new CommunicationObj("basic",new ClientResponse( (float)vR.dX * speed, (float) vR.dY * speed)));
+                if(vO.dX != 0 && vO.dY != 0)
+                {
+                    vR = vR.add(vO);
+                }
+                else {
+                    vR = vR.add(vA).add(vC).add(vS);
+                }
+
+                vR = vR.normalize();
+                vR = vR.scale(speed);
+
+                clientParser.sendData(new CommunicationObj("basic",new ClientResponse( (float)vR.dX, (float) vR.dY)));
 
             });
 
@@ -157,7 +191,6 @@ public class Client extends Thread{
         {
             ex.printStackTrace();
         }
-
 
     }
 }

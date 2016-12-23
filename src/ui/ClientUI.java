@@ -37,7 +37,7 @@ public class ClientUI extends Application{
         }
         catch (Exception ex)
         {
-            System.out.println("Platform not ready");
+            //System.out.println("Platform not ready");
         }
 
 

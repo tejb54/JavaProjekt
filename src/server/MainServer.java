@@ -4,7 +4,7 @@ package server;
  * Created by Tobias on 2016-12-06.
  */
 public class MainServer {
-    static Simulation mainSimulation;
+    public static Simulation mainSimulation;
     public static boolean runnigSimulation = true;
 
     public static void main(String[] args)

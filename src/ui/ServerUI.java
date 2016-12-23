@@ -9,14 +9,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import server.MainServer;
-
-import java.awt.event.MouseEvent;
 
 public class ServerUI extends Application {
 
@@ -69,12 +63,12 @@ public class ServerUI extends Application {
 
     }
 
-    public static void drawCircle(double x, double y,double radius)
+    public static void drawCircle(double x, double y,double radius, Color color)
     {
         Platform.runLater(()->{
             if(root != null)
             {
-                Circle c = new Circle(x,y,radius,new Color(0,0,1,0.1));
+                Circle c = new Circle(x,y,radius,color);
 
                 root.getChildren().add(c);
             }
@@ -91,15 +85,16 @@ public class ServerUI extends Application {
             MainServer.runnigSimulation = false;
         });
 
-//        root.setOnMouseMoved(event -> {
-//            System.out.println("Mouse moved");
-//            mouseX = (int) event.getX();
-//            mouseY = (int) event.getY();
-//        });
+        Scene s = new Scene(root, width, height);
+
+        s.setOnMousePressed((event)->{
+            System.out.println("Mouse clicked");
+            MainServer.mainSimulation.addObstacle(event.getX(),event.getY());
+        });
 
 
 
-        primaryStage.setScene(new Scene(root, width, height));
+        primaryStage.setScene(s);
         primaryStage.show();
     }
 }

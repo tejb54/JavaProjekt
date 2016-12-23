@@ -14,16 +14,19 @@ public class Agent implements Serializable {
     public double xVelocity;
     public double yVelocity;
 
+    public double neighborRadius;
+
     double angle; //this is used by the GUI.
 
     public List<SimpleAgent> neighbors; //list off all the neighbors
 
-    public Agent(double xPos, double yPos, double xVelocity, double yVelocity) {
-        neighbors = new ArrayList<>();
+    public Agent(double xPos, double yPos, double xVelocity, double yVelocity, double neighborRadius) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xVelocity = xVelocity;
         this.yVelocity = yVelocity;
+        this.neighborRadius = neighborRadius;
+        this.neighbors = new ArrayList<>();
     }
 
     SimpleAgent getSimplification()

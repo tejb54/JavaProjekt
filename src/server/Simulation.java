@@ -1,14 +1,13 @@
 package server;
 
+import javafx.scene.paint.Color;
 import shared.ClientResponse;
 import shared.CommunicationObj;
 import shared.MyPair;
 import shared.ServerResponse;
 import ui.ServerUI;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -20,8 +19,11 @@ public class Simulation extends Thread{
     //this data structure will ensure that there are only one agent per client
     //I use a hashMap for this.
     private ConcurrentHashMap<ClientThread, Agent> agentsMap;
-
     Vector<MyPair<ClientThread, ClientResponse>> inputData = new Vector<>();
+
+    private List<Obstacle> obstacleList = new ArrayList<>();
+
+    private int failedConnections = 0;
 
     public Vector<MyPair<ClientThread, ClientResponse>> getInputData()
     {
@@ -33,14 +35,26 @@ public class Simulation extends Thread{
         agentsMap = new ConcurrentHashMap<>();
     }
 
-    private float neighborRadius = 100f;
 
-    //TODO this needs to be synced.
     //check if it's working with the ConcurrentHashMap.
     public void addAgent(ClientThread ct, Agent a)
     {
         synchronized (agentsMap){
             agentsMap.put(ct,a);
+        }
+    }
+
+    public void removeAgent(ClientThread ct)
+    {
+        synchronized (agentsMap){
+            agentsMap.remove(ct);
+        }
+    }
+
+    public void addObstacle(double x, double y)
+    {
+        synchronized (obstacleList){
+            obstacleList.add(new Obstacle(x,y,10));
         }
 
     }
@@ -67,10 +81,6 @@ public class Simulation extends Thread{
         Thread.sleep(50);
 
 
-
-        //TODO check that the iterators are thread safe.
-
-
         synchronized (agentsMap)
         {
             //send getAction command to all the clients.
@@ -93,9 +103,9 @@ public class Simulation extends Thread{
                     Agent agentToCheck = (Agent) pair2.getValue();
                     if(agentToCheck != currentAgent)
                     {
-                        if(Math.abs(agentToCheck.xPos - currentAgent.xPos) < neighborRadius && Math.abs(agentToCheck.yPos - currentAgent.yPos) < neighborRadius)
+                        if(Math.abs(agentToCheck.xPos - currentAgent.xPos) < currentAgent.neighborRadius && Math.abs(agentToCheck.yPos - currentAgent.yPos) < currentAgent.neighborRadius)
                         {
-                            System.out.println("neighbor added");
+                            //System.out.println("neighbor added");
                             currentAgent.neighbors.add(agentToCheck.getSimplification());
                         }
                     }
@@ -108,18 +118,52 @@ public class Simulation extends Thread{
                 serverResponse.xVelocity = (float) currentAgent.xVelocity;
                 serverResponse.yVelocity = (float) currentAgent.yVelocity;
 
-                ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",serverResponse));
+
+                //calculate obstacle for current agent
+                synchronized (obstacleList)
+                {
+                    double smallestDistance = 0.0f;
+                    for (Obstacle o: obstacleList)
+                    {
+                        double distance = Math.sqrt(Math.pow(o.xPos - currentAgent.xPos,2) + Math.pow(o.yPos-currentAgent.yPos,2));
+                        if(distance < currentAgent.neighborRadius && ((distance < smallestDistance) || (distance != 0.0)))
+                        {
+                            smallestDistance = distance;
+                            serverResponse.obstacle = o;
+                        }
+                    }
+                }
+
+
+                try {
+                    ((ClientThread)pair.getKey()).parser.sendData(new CommunicationObj("getAction",serverResponse));
+                }
+                catch (Exception ex)
+                {
+                    System.out.println("Could not send data to that client.");
+                }
             }
+
 
 
 
             //TODO this is more of a hack.
             //wait for the queue/vector to get all the commands/responses from clients.
             while (inputData.size() != agentsMap.size()){
-                //System.out.println("waiting for all the commands");
+                System.out.println("waiting for all the commands");
             }
 
             ui.ServerUI.clearScreen();
+
+            synchronized (obstacleList)
+            {
+                for (Obstacle o: obstacleList)
+                {
+                    ui.ServerUI.drawCircle(o.xPos,o.yPos,10,new Color(0,0,1,1));
+                }
+            }
+
+
 
             for (MyPair<ClientThread,ClientResponse> p: inputData)
             {

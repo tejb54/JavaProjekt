@@ -43,7 +43,7 @@ public class ClientThread extends Thread {
             //Client sends the connection event
             Random r = new Random();
             float angle = r.nextInt(360);
-            MainServer.mainSimulation.addAgent(this,new Agent(50,50, Math.cos(angle), Math.sin(angle)));
+            MainServer.mainSimulation.addAgent(this,new Agent(50,50, Math.cos(angle), Math.sin(angle),60));
         });
 
         parser.registerCallback("basic",(String header,Object payload)->{
@@ -59,7 +59,8 @@ public class ClientThread extends Thread {
         catch (Exception ex)
         {
             System.out.println("Client probably disconnected!");
-            ex.printStackTrace();
+            MainServer.mainSimulation.removeAgent(this);
+            //ex.printStackTrace();
         }
     }
 }

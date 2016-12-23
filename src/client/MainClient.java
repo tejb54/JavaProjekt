@@ -13,7 +13,10 @@ public class MainClient {
             Client c = new Client();
             c.start();
 
-            ClientUI.startClientUI(args);
+            if(args[1].equals("true"))
+            {
+                ClientUI.startClientUI(args);
+            }
         }
         catch (Exception ex){
             ex.printStackTrace();
