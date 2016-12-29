@@ -13,30 +13,39 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Tobias on 2016-12-06.
  */
+
+
+
 public class Simulation extends Thread{
 
     //Simulation will use a data structure to keep track of all the connected clients
     //this data structure will ensure that there are only one agent per client
     //I use a hashMap for this.
     private ConcurrentHashMap<ClientThread, Agent> agentsMap;
-    Vector<MyPair<ClientThread, ClientResponse>> inputData = new Vector<>();
+    private Vector<MyPair<ClientThread, ClientResponse>> inputData = new Vector<>();
 
     private List<Obstacle> obstacleList = new ArrayList<>();
 
-    private int failedConnections = 0;
+    private long timeout = 2000;
 
     public Vector<MyPair<ClientThread, ClientResponse>> getInputData()
     {
         return inputData;
     }
 
-    //add a response queue from all the clients
+
     public Simulation() {
         agentsMap = new ConcurrentHashMap<>();
     }
 
 
     //check if it's working with the ConcurrentHashMap.
+
+    /**
+     * <p>addAgent will add an agent to the simulation (thread), this method will synchronize with the simulation thread</p>
+     * @param ct The client thread that will be used to identify a connection with an agent.
+     * @param a The new agent to add.
+     */
     public void addAgent(ClientThread ct, Agent a)
     {
         synchronized (agentsMap){
@@ -44,6 +53,11 @@ public class Simulation extends Thread{
         }
     }
 
+
+    /**
+     * <p>removeAgent will remove an agent from the simulation(thread) associated with the specified client thread, this method will synchronize with the simulation thread</p>
+     * @param ct The client thread that will be used to identify a connection with an agent.
+     */
     public void removeAgent(ClientThread ct)
     {
         synchronized (agentsMap){
@@ -147,9 +161,18 @@ public class Simulation extends Thread{
 
 
 
+            long startTime = System.currentTimeMillis();
+
             //TODO this is more of a hack.
             //wait for the queue/vector to get all the commands/responses from clients.
             while (inputData.size() != agentsMap.size()){
+                long endTime = System.currentTimeMillis();
+
+                if(startTime - endTime > timeout)
+                {
+                    System.out.println("Timeout happened");
+                    break;
+                }
                 System.out.println("waiting for all the commands");
             }
 
