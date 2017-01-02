@@ -3,9 +3,14 @@ package server;
 /**
  * Created by Tobias on 2016-12-06.
  */
+
+/**
+ * Main server is responsible for starting everything.
+ * It will start the NetworkManager, simulation and the UI.
+ */
 public class MainServer {
     public static Simulation mainSimulation;
-    public static boolean runnigSimulation = true;
+    public static boolean runningSimulation = true;
 
     public static void main(String[] args)
     {

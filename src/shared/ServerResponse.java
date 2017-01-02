@@ -8,8 +8,11 @@ import java.io.Serializable;
 /**
  * Created by Tobias on 2016-12-10.
  */
+
+/**
+ * ServerResponse is a class used to send encapsulate the data from the server to the client.
+ */
 public class ServerResponse implements Serializable {
-    //TODO this class should contain data about an agents neighbors.
 
     public SimpleAgent[] neighbors;
     public Obstacle obstacle;

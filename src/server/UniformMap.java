@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * Created by Tobias on 2016-12-17.
  */
+
+
 public class UniformMap {
     int width;
     int height;

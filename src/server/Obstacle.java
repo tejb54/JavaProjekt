@@ -5,9 +5,13 @@ import java.io.Serializable;
 /**
  * Created by Tobias on 2016-12-20.
  */
+
+/**
+ * <p>Obstacle class has the necessary data fo an obstacle</p>
+ */
 public class Obstacle implements Serializable{
-    public double xPos; //this is used by the GUI.
-    public double yPos; //this is used by the GUI.
+    public double xPos;
+    public double yPos;
 
     public double radius;
 

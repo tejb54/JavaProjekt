@@ -5,24 +5,33 @@ import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import server.MainServer;
 import server.SimpleAgent;
 import shared.ServerResponse;
 
 /**
  * Created by Tobias on 2016-12-13.
  */
+
+
+/**
+ * ClientUI handles the ui for the client.
+ */
 public class ClientUI extends Application{
 
+
+    /**
+     * startClientUI will start the javafx ui in its own thread.
+     * @param args array of strings.
+     */
     public static void startClientUI(String[] args){
         launch(args);
     }
 
     private static Group root;
+
 
     public static void clearScreen()
     {
@@ -87,7 +96,7 @@ public class ClientUI extends Application{
         root = new Group();
 
         primaryStage.setOnCloseRequest(event -> {
-            MainServer.runnigSimulation = false;
+            System.exit(0); //exit the client
         });
 
 

@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by Tobias on 2016-12-06.
+ * Created by Tobias Gillström on 2016-12-06.
  */
 
 
@@ -22,18 +22,27 @@ public class Simulation extends Thread{
     //this data structure will ensure that there are only one agent per client
     //I use a hashMap for this.
     private ConcurrentHashMap<ClientThread, Agent> agentsMap;
+
+    //this vector will be used to get the responses from the connected clients.
     private Vector<MyPair<ClientThread, ClientResponse>> inputData = new Vector<>();
 
+    //list of all the obstacles.
     private List<Obstacle> obstacleList = new ArrayList<>();
 
     private long timeout = 2000;
 
+    /**
+     * <p>get method for the inputData vector.</p>
+     * @return
+     */
     public Vector<MyPair<ClientThread, ClientResponse>> getInputData()
     {
         return inputData;
     }
 
-
+    /**
+     * <p>The simulation constructor that will initialize the object.</p>
+     */
     public Simulation() {
         agentsMap = new ConcurrentHashMap<>();
     }
@@ -65,18 +74,26 @@ public class Simulation extends Thread{
         }
     }
 
+    /**
+     * <p>addObstacle will add an obstacle to the simulation.</p>
+     * @param x The x position of the obstacle.
+     * @param y The x position of the obstacle.
+     */
     public void addObstacle(double x, double y)
     {
         synchronized (obstacleList){
             obstacleList.add(new Obstacle(x,y,10));
         }
-
     }
 
+
+    /**
+     * <p>Run is the method that controls the update loop.</p>
+     */
     @Override
     public void run() {
         try {
-            while (MainServer.runnigSimulation)
+            while (MainServer.runningSimulation)
             {
                 update();
             }
@@ -87,6 +104,11 @@ public class Simulation extends Thread{
         }
     }
 
+
+    /**
+     * <p>This is the main simulation loop.</p>
+     * @throws Exception
+     */
     private void update() throws Exception
     {
 

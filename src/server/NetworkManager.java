@@ -6,6 +6,11 @@ import java.net.Socket;
 /**
  * Created by Tobias on 2016-12-06.
  */
+
+/**
+ * NetworkManager will be waiting for tcp connections
+ * and starting a new ClientThread for each connection.
+ */
 public class NetworkManager extends Thread{
     private int port;
 
@@ -16,7 +21,6 @@ public class NetworkManager extends Thread{
     @Override
     public void run() {
 
-
         try {
             ServerSocket serverConnection = new ServerSocket(port);
 
@@ -26,7 +30,7 @@ public class NetworkManager extends Thread{
                 Socket newSocket = serverConnection.accept();
                 System.out.println("new connection established!");
 
-                //hand the connection over to it's own thread.
+                //hand the connection to it's own thread.
                 ClientThread ct = new ClientThread(newSocket);
             }
         }

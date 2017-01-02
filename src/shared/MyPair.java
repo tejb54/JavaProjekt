@@ -3,6 +3,12 @@ package shared;
 /**
  * Created by Tobias on 2016-12-08.
  */
+
+/**
+ * <p>Simple pair of two data types.</p>
+ * @param <L>
+ * @param <R>
+ */
 public class MyPair<L,R>
 {
     private L l;

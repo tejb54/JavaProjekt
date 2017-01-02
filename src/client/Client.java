@@ -15,10 +15,18 @@ import java.util.Random;
 /**
  * Created by Tobias on 2016-12-06.
  */
+
+/**
+ * The Client class is responsible for handling the network communication and the logic for the client.
+ */
 public class Client extends Thread{
 
-
-    public Vector2D calcAlignment(ServerResponse response)
+    /**
+     * calcAlignment will calculate the alignment for the client depending on it's neighbors.
+     * @param response Contains the data about the current client and it's neighbors.
+     * @return A vector2 with the vector of the alignment.
+     */
+    private Vector2D calcAlignment(ServerResponse response)
     {
 
         Vector2D v = new Vector2D(0,0);
@@ -42,7 +50,12 @@ public class Client extends Thread{
         return v.normalize();
     }
 
-    public Vector2D calcCohesion(ServerResponse response)
+    /**
+     * calcCohesion will make sure that the client try to move to the center it's neighbors.
+     * @param response Contains the data about the current client and it's neighbors.
+     * @return A vector2 with the direction to move in order to reach the center of it's neighbors.
+     */
+    private Vector2D calcCohesion(ServerResponse response)
     {
 
         Vector2D v = new Vector2D(0,0);
@@ -68,7 +81,12 @@ public class Client extends Thread{
         return v.normalize();
     }
 
-    public Vector2D calcSeparation(ServerResponse response)
+    /**
+     * calcSeparation will make sure that the client don't crowd it's neighbors.
+     * @param response Contains the data about the current client and it's neighbors.
+     * @return A vector2 with the direction to move in order to not crowd it's neighbors.
+     */
+    private Vector2D calcSeparation(ServerResponse response)
     {
 
         Vector2D v = new Vector2D(0,0);
@@ -94,7 +112,12 @@ public class Client extends Thread{
         return v.normalize();
     }
 
-    public Vector2D calcObstacle(ServerResponse response)
+    /**
+     * calcObstacle will try to move the client away from a obstacle.
+     * @param response Contains the data about the current client and it's neighbors.
+     * @return  A vector2 with the direction to move in order to not hit the obstacle.
+     */
+    private Vector2D calcObstacle(ServerResponse response)
     {
         Vector2D v = new Vector2D(0,0);
 
@@ -112,6 +135,7 @@ public class Client extends Thread{
         return v.normalize();
     }
 
+
     public void run()
     {
         try {
@@ -122,14 +146,15 @@ public class Client extends Thread{
             shared.NetworkParser clientParser = new shared.NetworkParser(in,out);
 
             float speed = 7f;
+
+            //the wights for the different movement vectors.
             float separationWeight = 1.0f;
             float alignmentWeight = 1.0f;
             float cohesionWeight = 1.0f;
             float obstacleWeight = 2.0f;
 
 
-            Random r = new Random();
-
+            //the simulation has requested an action from the client.
             clientParser.registerCallback("getAction",(String header, Object payload)->{
                 ServerResponse response = (ServerResponse)payload;
 
@@ -144,8 +169,7 @@ public class Client extends Thread{
                     //ex.printStackTrace();
                 }
 
-
-                if(response.obstacle !=  null)
+                if(response.obstacle != null)
                 {
                     System.out.println("Obstacle");
                 }
@@ -161,10 +185,13 @@ public class Client extends Thread{
                 vO = vO.scale(obstacleWeight);
 
 
+                //the client's current velocity vector.
                 Vector2D vR = new Vector2D(response.xVelocity,response.yVelocity);
 
                 System.out.println(vO.dX + " - " + vO.dY);
 
+
+                //if there is an obstacle, then you should not care about your neighbors.
                 if(vO.dX != 0 && vO.dY != 0)
                 {
                     vR = vR.add(vO);
@@ -173,14 +200,17 @@ public class Client extends Thread{
                     vR = vR.add(vA).add(vC).add(vS);
                 }
 
+                //normalize to only get the direction.
                 vR = vR.normalize();
                 vR = vR.scale(speed);
 
-                clientParser.sendData(new CommunicationObj("basic",new ClientResponse( (float)vR.dX, (float) vR.dY)));
+                //send the data to the simulation.
+                clientParser.sendData(new CommunicationObj("basic",new ClientResponse((float)vR.dX, (float) vR.dY)));
 
             });
 
 
+            //send a connection event to the server.
             out.writeObject(new CommunicationObj("Connecting",123));
             while (true)
             {

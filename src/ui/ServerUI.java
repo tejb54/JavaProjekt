@@ -1,6 +1,4 @@
-package ui;/**
- * Created by Tobias on 2016-12-06.
- */
+package ui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -12,8 +10,11 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import server.MainServer;
 
-public class ServerUI extends Application {
+/**
+ * Created by Tobias Gillström on 2016-12-06.
+ */
 
+public class ServerUI extends Application {
 
     public static void startUI(String[] args)
     {
@@ -82,7 +83,7 @@ public class ServerUI extends Application {
         root = new Group();
 
         primaryStage.setOnCloseRequest(event -> {
-            MainServer.runnigSimulation = false;
+            System.exit(0);
         });
 
         Scene s = new Scene(root, width, height);

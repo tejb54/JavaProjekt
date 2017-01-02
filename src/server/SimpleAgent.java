@@ -1,14 +1,17 @@
 package server;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by Tobias on 2016-12-12.
  */
+
+/**
+ * <P>This class is used to send data over the network.</P>
+ */
 public class SimpleAgent implements Serializable {
-    public double xPos; //this is used by the GUI.
-    public double yPos; //this is used by the GUI.
+    public double xPos;
+    public double yPos;
     public double xVelocity;
     public double yVelocity;
 
