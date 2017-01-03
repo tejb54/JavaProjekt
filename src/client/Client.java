@@ -165,7 +165,7 @@ public class Client extends Thread{
                 }
                 catch (Exception ex)
                 {
-                    //System.out.println("UI is not ready");
+                    System.out.println("UI is not ready");
                     //ex.printStackTrace();
                 }
 

@@ -17,10 +17,9 @@ public class MainClient {
             Client c = new Client();
             c.start();
 
-            if(args[1].equals("true"))
-            {
-                ClientUI.startClientUI(args);
-            }
+
+            ClientUI.startClientUI(args);
+
         }
         catch (Exception ex){
             ex.printStackTrace();

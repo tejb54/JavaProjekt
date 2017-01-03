@@ -179,7 +179,7 @@ public class Simulation extends Thread{
                     System.out.println("Could not send data to that client.");
                 }
             }
-
+        }
 
 
 
@@ -190,12 +190,12 @@ public class Simulation extends Thread{
             while (inputData.size() != agentsMap.size()){
                 long endTime = System.currentTimeMillis();
 
-                if(startTime - endTime > timeout)
+                if(endTime - startTime > timeout)
                 {
                     System.out.println("Timeout happened");
                     break;
                 }
-                System.out.println("waiting for all the commands");
+                //System.out.println("waiting for all the commands");
             }
 
             ui.ServerUI.clearScreen();
@@ -209,38 +209,34 @@ public class Simulation extends Thread{
             }
 
 
+        synchronized (agentsMap) {
 
-            for (MyPair<ClientThread,ClientResponse> p: inputData)
-            {
+            for (MyPair<ClientThread, ClientResponse> p : inputData) {
                 Agent currentAgent = agentsMap.get(p.getL());
                 currentAgent.xPos += p.getR().xVelocity;
                 currentAgent.yPos += p.getR().yVelocity;
                 currentAgent.xVelocity = p.getR().xVelocity;
                 currentAgent.yVelocity = p.getR().yVelocity;
 
-                currentAgent.angle = Math.toDegrees(Math.atan2(p.getR().yVelocity,p.getR().xVelocity));
+                currentAgent.angle = Math.toDegrees(Math.atan2(p.getR().yVelocity, p.getR().xVelocity));
 
 
-                if(currentAgent.xPos > ServerUI.width)
-                {
+                if (currentAgent.xPos > ServerUI.width) {
                     currentAgent.xPos = 0;
                 }
 
-                if(currentAgent.xPos < 0)
-                {
+                if (currentAgent.xPos < 0) {
                     currentAgent.xPos = ServerUI.width;
                 }
 
-                if(currentAgent.yPos > ServerUI.height)
-                {
+                if (currentAgent.yPos > ServerUI.height) {
                     currentAgent.yPos = 0;
                 }
 
-                if(currentAgent.yPos < 0)
-                {
+                if (currentAgent.yPos < 0) {
                     currentAgent.yPos = ServerUI.height;
                 }
-                ui.ServerUI.drawTriangle(currentAgent.xPos,currentAgent.yPos,currentAgent.angle);
+                ui.ServerUI.drawTriangle(currentAgent.xPos, currentAgent.yPos, currentAgent.angle);
                 //ui.ServerUI.drawCircle(currentAgent.xPos,currentAgent.yPos,neighborRadius);
             }
 
